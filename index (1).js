@@ -59,7 +59,6 @@ function initializeServerConfigs() {
   }
 }
 
-// [MANTIDAS TODAS AS SUAS FUNÇÕES ORIGINAIS, MAS ADAPTADAS PARA MULTI-SERVIDORES]
 
 // Função para obter o token de acesso da Twitch (igual à original)
 async function getTwitchAccessToken() {
