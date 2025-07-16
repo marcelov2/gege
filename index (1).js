@@ -60,7 +60,7 @@ function initializeServerConfigs() {
 }
 
 
-// Função para obter o token de acesso da Twitch (igual à original)
+
 async function getTwitchAccessToken() {
   try {
     const response = await axios.post('https://id.twitch.tv/oauth2/token', null, {
@@ -76,7 +76,7 @@ async function getTwitchAccessToken() {
   }
 }
 
-// Função para verificar se um canal está ao vivo (igual à original)
+
 async function checkStream(twitchUser) {
   try {
     const response = await axios.get(`https://api.twitch.tv/helix/streams?user_login=${twitchUser}`, {
@@ -105,7 +105,7 @@ async function checkStream(twitchUser) {
   }
 }
 
-// Função para limpar o chat (igual à original, mas agora por canal)
+
 async function clearChat(channel) {
   let messages;
   do {
@@ -115,7 +115,7 @@ async function clearChat(channel) {
   } while (messages.size > 0);
 }
 
-// Função para verificar as lives (adaptada para multi-servidores)
+
 async function checkTwitchStreams() {
   for (const [configKey, config] of serverConfigs.entries()) {
     const channel = client.channels.cache.get(config.channelId);
@@ -155,7 +155,7 @@ async function checkTwitchStreams() {
   }
 }
 
-// Função para atualizar thumbnails (adaptada para multi-servidores)
+
 async function updateThumbnails() {
   for (const [configKey, config] of serverConfigs.entries()) {
     const channel = client.channels.cache.get(config.channelId);
@@ -182,7 +182,7 @@ async function updateThumbnails() {
   }
 }
 
-// Função para atualizar a presença (adaptada para multi-servidores)
+
 function rotatePresence(config) {
   if (config.liveStreamers.length > 0) {
     const streamer = config.liveStreamers[config.currentStreamerIndex];
@@ -191,7 +191,7 @@ function rotatePresence(config) {
       config.currentStreamerIndex = (config.currentStreamerIndex + 1) % config.liveStreamers.length;
     }
   } else {
-    // Só zera a presença se nenhum servidor tiver lives
+
     const anyLive = Array.from(serverConfigs.values()).some(c => c.liveStreamers.length > 0);
     if (!anyLive) {
       client.user.setActivity(null);
@@ -199,7 +199,7 @@ function rotatePresence(config) {
   }
 }
 
-// Função para reiniciar o bot (igual à original)
+
 function restartBotIn12Hours() {
   let remainingTime = 12 * 60 * 60 * 1000;
   const interval = setInterval(() => {
@@ -216,19 +216,19 @@ function restartBotIn12Hours() {
   }, 60 * 1000);
 }
 
-// Inicialização do bot (adaptada para multi-servidores)
+
 client.once('ready', async () => {
   console.log('Bot está online!');
   initializeServerConfigs();
   await getTwitchAccessToken();
 
-  // Limpa o chat em todos os canais configurados
+
   for (const [configKey, config] of serverConfigs.entries()) {
     const channel = client.channels.cache.get(config.channelId);
     if (channel) await clearChat(channel);
   }
 
-  // Configura os intervalos
+
   setInterval(checkTwitchStreams, 60 * 1000);
   setInterval(updateThumbnails, 15 * 60 * 1000);
   restartBotIn12Hours();
